@@ -29,6 +29,20 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const singleProduct = await productsCollection.findOne(query)
                 res.send(singleProduct)
             })
+            app.put('/warehouseproducts/:id', async(req, res) => {
+                const id = req.params.id ;
+                const filter = {_id:ObjectId(id)}
+                const quantity = req.body.newQuantity;
+                console.log(quantity);
+                const options = { upsert : true}
+                const updateDoc = {
+                    $set:{
+                        quantity : quantity - 1
+                    }
+                }
+                const final =  await productsCollection.updateOne(filter, updateDoc, options)
+                res.send(final)
+            })
 
         }
         finally{}
