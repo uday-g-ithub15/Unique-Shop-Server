@@ -33,11 +33,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const id = req.params.id ;
                 const filter = {_id:ObjectId(id)}
                 const quantity = req.body.newQuantity;
-                console.log(quantity);
+                const addedQuantity = req.body.addedQuantity;
                 const options = { upsert : true}
                 const updateDoc = {
                     $set:{
-                        quantity : quantity - 1
+                        quantity : addedQuantity || quantity - 1  
                     }
                 }
                 const final =  await productsCollection.updateOne(filter, updateDoc, options)
