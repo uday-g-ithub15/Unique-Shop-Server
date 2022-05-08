@@ -50,6 +50,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const insertItem = await productsCollection.insertOne(newProduct)
                 res.send(insertItem)
             })
+            app.delete('/warehouseproducts/:id', async (req, res) => {
+                const id = req.params.id;
+                const query = {_id:ObjectId(id)}
+                const deleteProduct = await productsCollection.deleteOne(query)
+                res.send(deleteProduct)
+            })
 
         }
         finally{}
