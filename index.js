@@ -44,6 +44,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 res.send(final)
             })
 
+            app.post('/warehouseproducts', async(req, res) => {
+                const newProduct = req.body;
+                console.log(newProduct);
+                const insertItem = await productsCollection.insertOne(newProduct)
+                res.send(insertItem)
+            })
+
         }
         finally{}
     }
