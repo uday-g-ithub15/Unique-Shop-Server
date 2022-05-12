@@ -23,6 +23,7 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const products = await cursor.toArray();
                 res.send(products)
             })
+           
             app.get('/warehouseproducts/:id', async(req, res) => {
                 const id = req.params.id;
                 const query = {_id:ObjectId(id)}
@@ -33,11 +34,12 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 const id = req.params.id ;
                 const filter = {_id:ObjectId(id)}
                 const quantity = req.body.newQuantity;
-                const addedQuantity = req.body.addedQuantity;
+                const sold = req.body.newSold;
                 const options = { upsert : true}
                 const updateDoc = {
                     $set:{
-                        quantity : addedQuantity || quantity - 1  
+                        quantity : quantity - 1  ,
+                        sold : sold + 1
                     }
                 }
                 const final =  await productsCollection.updateOne(filter, updateDoc, options)
@@ -49,6 +51,13 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
                 console.log(newProduct);
                 const insertItem = await productsCollection.insertOne(newProduct)
                 res.send(insertItem)
+            })
+             app.get('/addedproducts', async (req, res) => {
+                const email = req.query.email;
+                const query = {email};
+                const cursor = productsCollection.find(query)
+                const products = await cursor.toArray();
+                res.send(products)
             })
             app.delete('/warehouseproducts/:id', async (req, res) => {
                 const id = req.params.id;
