@@ -35,20 +35,32 @@ const run = async () => {
             const filter = { _id: ObjectId(id) }
             const quantity = req.body.newQuantity;
             const sold = req.body.newSold;
+            const updatingQuantity = req.body.updatingQuantity;
             const options = { upsert: true }
+            // const options2 = { upsert: false }
             const updateDoc = {
                 $set: {
                     quantity: quantity - 1,
                     sold: sold + 1
                 }
             }
-            const final = await productsCollection.updateOne(filter, updateDoc, options)
-            res.send(final)
+            const updateRestockQuantity = {
+                $set: {
+                    quantity: updatingQuantity
+                },
+            }
+            if (!updatingQuantity) {
+                const final = await productsCollection.updateOne(filter, updateDoc, options)
+                res.send(final)
+            }
+            else {
+                const final = await productsCollection.updateOne(filter, updateRestockQuantity, options)
+                res.send(final)
+            }
         })
 
         app.post('/warehouseproducts', async (req, res) => {
             const newProduct = req.body;
-            console.log(newProduct);
             const insertItem = await productsCollection.insertOne(newProduct)
             res.send(insertItem)
         })
@@ -72,7 +84,7 @@ const run = async () => {
 run().catch(console.dir);
 //Initial
 app.get('/', (req, res) => {
-    res.send('Runnign')
+    res.send('Running')
 })
 app.listen(port, () => {
     console.log('Listening from port : ', port);
