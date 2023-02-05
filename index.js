@@ -9,7 +9,7 @@ app.use(cors())
 app.use(express.json());
 
 
-const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.gpw4k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`;
+const uri = process.env.DB_URL
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 const run = async () => {
@@ -21,6 +21,7 @@ const run = async () => {
             const query = {};
             const cursor = productsCollection.find(query)
             const products = await cursor.toArray();
+            console.log(products)
             res.send(products)
         })
 
