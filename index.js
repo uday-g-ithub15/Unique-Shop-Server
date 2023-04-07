@@ -21,7 +21,6 @@ const run = async () => {
             const query = {};
             const cursor = productsCollection.find(query)
             const products = await cursor.toArray();
-            console.log(products)
             res.send(products)
         })
 
