@@ -1,3 +1,4 @@
+// https://unique-shop-server.onrender.com
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
@@ -10,7 +11,13 @@ app.use(express.json());
 
 
 const uri = process.env.DB_URL
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+const client = new MongoClient(uri, {
+    serverApi: {
+        version: ServerApiVersion.v1,
+        strict: true,
+        deprecationErrors: true,
+    }
+});
 
 const run = async () => {
     try {
@@ -27,8 +34,8 @@ const run = async () => {
         app.get('/warehouseproducts/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) }
-            const singleProduct = await productsCollection.findOne(query)
-            res.send(singleProduct)
+            const result = await productsCollection.findOne(query)
+            res.send(result)
         })
         app.put('/warehouseproducts/:id', async (req, res) => {
             const id = req.params.id;
@@ -51,10 +58,12 @@ const run = async () => {
             }
             if (!updatingQuantity) {
                 const final = await productsCollection.updateOne(filter, updateDoc, options)
+
                 res.send(final)
             }
             else {
                 const final = await productsCollection.updateOne(filter, updateRestockQuantity, options)
+
                 res.send(final)
             }
         })
